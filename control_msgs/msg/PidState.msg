@@ -1,4 +1,4 @@
-Header header
+std_msgs/Header header
 duration timestep
 float64 error
 float64 error_dot

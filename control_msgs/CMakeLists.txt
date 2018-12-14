@@ -2,11 +2,6 @@ cmake_minimum_required(VERSION 3.5)
 
 project(control_msgs)
 
-# Default to C11
-if(NOT CMAKE_C_STANDARD)
-  set(CMAKE_C_STANDARD 11)
-endif()
-
 # Default to C++14
 if(NOT CMAKE_CXX_STANDARD)
   set(CMAKE_CXX_STANDARD 14)
@@ -18,16 +13,9 @@ endif()
 find_package(ament_cmake REQUIRED)
 find_package(builtin_interfaces REQUIRED)
 find_package(rosidl_default_generators REQUIRED)
+find_package(std_msgs REQUIRED)
 find_package(trajectory_msgs REQUIRED)
-find_package(actionlib_msgs REQUIRED)
-
-set(msg_files
-  "msg/GripperCommand.msg"
-  "msg/JointControllerState.msg"
-  "msg/JointTolerance.msg"
-  "msg/JointTrajectoryControllerState.msg"
-  "msg/PidState.msg"
-)
+find_package(geometry_msgs REQUIRED)
 
 set(action_files
   "action/FollowJointTrajectory.action"
@@ -36,21 +24,29 @@ set(action_files
   "action/PointHead.action"
   "action/SingleJointPosition.action"
 )
-
+set(msg_files
+  "msg/GripperCommand.msg"
+  "msg/JointControllerState.msg"
+  "msg/JointTolerance.msg"
+  "msg/JointTrajectoryControllerState.msg"
+  "msg/PidState.msg"
+)
 set(srv_files
   "srv/QueryCalibrationState.srv"
   "srv/QueryTrajectoryState.srv"
 )
 
-if(BUILD_TESTING)
-  find_package(ament_lint_auto REQUIRED)
-  ament_lint_auto_find_test_dependencies()
-endif()
-
-if(DEFINED PYTHON_INSTALL_DIR)
-  install(DIRECTORY src/test_msgs
-    DESTINATION "${PYTHON_INSTALL_DIR}/")
-endif()
+rosidl_generate_interfaces(${PROJECT_NAME}
+  ${action_files}
+  ${msg_files}
+  ${srv_files}
+  DEPENDENCIES 
+    builtin_interfaces
+    std_msgs
+    trajectory_msgs
+    geometry_msgs
+  ADD_LINTER_TESTS
+)
 
 ament_export_dependencies(rosidl_default_runtime)
 ament_package()
